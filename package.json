@@ -1,0 +1,23 @@
+{
+  "name": "flash-bingo-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DinhQuanELV/flash-bingo-service.git"
+  },
+  "author": "dq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DinhQuanELV/flash-bingo-service/issues"
+  },
+  "homepage": "https://github.com/DinhQuanELV/flash-bingo-service#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

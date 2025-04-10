@@ -1,0 +1,7 @@
+# dependencies
+/node_modules
+/.vscode
+
+#misc
+.env
+.env.prod
