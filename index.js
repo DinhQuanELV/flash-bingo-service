@@ -2,10 +2,15 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 
+const db = require('./src/config/db');
+
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// connect database
+db.connect();
 
 // apply library
 app.use(
