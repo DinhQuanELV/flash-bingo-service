@@ -32,7 +32,7 @@ const authController = {
     }
   },
 
-  // [GET] /auth/login
+  // [POST] /auth/login
   login: async (req, res, next) => {
     try {
       const { username, password } = req.body;
