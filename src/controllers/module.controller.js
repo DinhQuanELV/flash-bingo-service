@@ -1,3 +1,6 @@
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
+
 const Module = require('../models/Module');
 
 const moduleController = {
@@ -35,7 +38,12 @@ const moduleController = {
   // [GET] /module/show/all
   showAll: async (req, res, next) => {
     try {
-      //
+      const modules = await Module.find().lean();
+      if (modules.length === 0) {
+        return res.status(404).json({ message: 'No modules found!' });
+      }
+
+      return res.status(200).json(modules);
     } catch (error) {
       next(error);
     }
