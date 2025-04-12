@@ -151,7 +151,18 @@ const moduleController = {
   // [DELETE] /module/delete/:moduleId
   delete: async (req, res, next) => {
     try {
-      //
+      const { moduleId } = req.params;
+
+      if (!ObjectId.isValid(moduleId)) {
+        return res.status(400).json({ message: 'Invalid moduleId!' });
+      }
+
+      const module = await Module.findByIdAndDelete(moduleId);
+      if (!module) {
+        return res.status(404).json({ message: 'Module not found!' });
+      }
+
+      return res.status(200).json({ message: 'Delete module successfully!' });
     } catch (error) {
       next(error);
     }
