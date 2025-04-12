@@ -72,7 +72,28 @@ const moduleController = {
   // [POST] /module/search
   search: async (req, res, next) => {
     try {
-      //
+      const { query } = req.body;
+      if (!query || typeof query !== 'string') {
+        return res.status(200).json({
+          modules: [],
+          message: 'No modules found!',
+        });
+      }
+
+      const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regexPattern = new RegExp(safeQuery, 'i');
+
+      const modules = await Module.find({
+        title: { $regex: regexPattern },
+      }).lean();
+      if (modules.length === 0) {
+        return res.status(200).json({
+          modules: [],
+          message: 'No modules found!',
+        });
+      }
+
+      return res.status(200).json(modules);
     } catch (error) {
       next(error);
     }
