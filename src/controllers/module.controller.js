@@ -52,7 +52,18 @@ const moduleController = {
   // [GET] /module/show/:moduleId
   show: async (req, res, next) => {
     try {
-      //
+      const { moduleId } = req.params;
+
+      if (!ObjectId.isValid(moduleId)) {
+        return res.status(400).json({ message: 'Invalid moduleId!' });
+      }
+
+      const module = await Module.findById(moduleId).lean();
+      if (!module) {
+        return res.status(404).json({ message: 'Module not found!' });
+      }
+
+      return res.status(200).json(module);
     } catch (error) {
       next(error);
     }
