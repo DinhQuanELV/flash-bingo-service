@@ -13,6 +13,15 @@ const moduleController = {
         return res.status(400).json({ message: 'Please type content!' });
       }
 
+      // check type value
+      if (typeof title !== 'string') {
+        return res.status(400).json({ message: 'Title must be string type!' });
+      }
+
+      if (!Array.isArray(keywords)) {
+        return res.status(400).json({ message: 'Keyword must be array type!' });
+      }
+
       //   check exists module
       const existsModule = await Module.findOne({ title });
       if (existsModule) {
