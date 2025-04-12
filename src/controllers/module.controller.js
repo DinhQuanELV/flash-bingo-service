@@ -102,7 +102,38 @@ const moduleController = {
   // [PUT] /module/update/:moduleId
   update: async (req, res, next) => {
     try {
-      //
+      const { moduleId } = req.params;
+      const { title, keywords } = req.body;
+
+      if (!ObjectId.isValid(moduleId)) {
+        return res.status(400).json({ message: 'Invalid moduleId!' });
+      }
+
+      if (!title || !keywords) {
+        return res.status(400).json({ message: 'Please type content!' });
+      }
+
+      if (typeof title !== 'string') {
+        return res.status(400).json({ message: 'Title must be string type!' });
+      }
+
+      if (!Array.isArray(keywords)) {
+        return res.status(400).json({ message: 'Keyword must be array type!' });
+      }
+
+      const module = await Module.findByIdAndUpdate(
+        moduleId,
+        { title, keywords },
+        { new: true },
+      );
+      if (!module) {
+        return res.status(404).json({ message: 'Module not found!' });
+      }
+
+      return res.status(200).json({
+        message: 'Update module successfully!',
+        module,
+      });
     } catch (error) {
       next(error);
     }
