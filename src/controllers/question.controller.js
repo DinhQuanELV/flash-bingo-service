@@ -106,9 +106,36 @@ const questionController = {
   },
 
   // [PATCH] /question/update/:questionId
-  update: async () => {
+  update: async (req, res, next) => {
     try {
-      //
+      const { questionId } = req.params;
+      const { keyword, title, correctAnswer, wrongAnswers } = req.body;
+
+      if (!keyword || !title || !correctAnswer || wrongAnswers.length === 0) {
+        return res.status(400).json({ message: 'Please type content!' });
+      }
+
+      validateObjectId(questionId, 'questionId');
+      validateString(keyword, 'keyword');
+      validateString(title, 'title');
+      validateString(correctAnswer, 'correctAnswer');
+      validateArray(wrongAnswers, 'wrongAnswers');
+
+      const question = await Question.findByIdAndUpdate(
+        questionId,
+        {
+          keyword,
+          title,
+          correctAnswer,
+          wrongAnswers,
+        },
+        { new: true },
+      );
+      if (!question) {
+        return res.status(404).json({ message: 'Question not found!' });
+      }
+
+      return res.status(200).json(question);
     } catch (error) {
       next(error);
     }
