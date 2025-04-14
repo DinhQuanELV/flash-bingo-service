@@ -17,11 +17,11 @@ const moduleController = {
       }
 
       // check type value
-      validateString(title, 'Title');
-      validateArray(keywords, 'Keywords');
+      validateString(title, 'title');
+      validateArray(keywords, 'keywords');
 
       // check exists module
-      const existsModule = await Module.findOne({ title });
+      const existsModule = await Module.findOne({ title }).lean();
       if (existsModule) {
         return res.status(409).json({ message: 'Module already exists!' });
       }
@@ -33,10 +33,7 @@ const moduleController = {
       });
       await module.save();
 
-      return res.status(201).json({
-        message: 'Create module successfully!',
-        module,
-      });
+      return res.status(201).json(module);
     } catch (error) {
       next(error);
     }
@@ -47,7 +44,10 @@ const moduleController = {
     try {
       const modules = await Module.find().lean();
       if (modules.length === 0) {
-        return res.status(404).json({ message: 'No modules found!' });
+        return res.status(200).json({
+          message: 'No modules found!',
+          modules: [],
+        });
       }
 
       return res.status(200).json(modules);
@@ -115,22 +115,19 @@ const moduleController = {
       }
 
       validateObjectId(moduleId, 'moduleId');
-      validateString(title, 'Title');
-      validateArray(keywords, 'Keywords');
+      validateString(title, 'title');
+      validateArray(keywords, 'keywords');
 
       const module = await Module.findByIdAndUpdate(
         moduleId,
         { title, keywords },
         { new: true },
-      );
+      ).lean();
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
 
-      return res.status(200).json({
-        message: 'Update module successfully!',
-        module,
-      });
+      return res.status(200).json(module);
     } catch (error) {
       next(error);
     }
@@ -143,7 +140,7 @@ const moduleController = {
 
       validateObjectId(moduleId, 'moduleId');
 
-      const module = await Module.findByIdAndDelete(moduleId);
+      const module = await Module.findByIdAndDelete(moduleId).lean();
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
