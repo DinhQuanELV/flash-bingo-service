@@ -45,7 +45,7 @@ const moduleController = {
       const modules = await Module.find().lean();
       if (modules.length === 0) {
         return res.status(200).json({
-          message: 'No modules found!',
+          message: 'Does not have any module yet!',
           modules: [],
         });
       }
