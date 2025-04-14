@@ -1,34 +1,32 @@
-const mongoose = require('mongoose');
-const { ObjectId } = mongoose.Types;
-
 const Module = require('../models/Module');
+const {
+  validateString,
+  validateArray,
+  validateObjectId,
+} = require('../utils/validateType');
 
 const moduleController = {
   // [POST] /module/create
   create: async (req, res, next) => {
     try {
       const { title, keywords } = req.body;
+
       // check empty content
       if (!title || !keywords) {
         return res.status(400).json({ message: 'Please type content!' });
       }
 
       // check type value
-      if (typeof title !== 'string') {
-        return res.status(400).json({ message: 'Title must be string type!' });
-      }
+      validateString(title, 'Title');
+      validateArray(keywords, 'Keywords');
 
-      if (!Array.isArray(keywords)) {
-        return res.status(400).json({ message: 'Keyword must be array type!' });
-      }
-
-      //   check exists module
+      // check exists module
       const existsModule = await Module.findOne({ title });
       if (existsModule) {
         return res.status(409).json({ message: 'Module already exists!' });
       }
 
-      //   create new module
+      // create new module
       const module = new Module({
         title,
         keywords,
@@ -63,9 +61,7 @@ const moduleController = {
     try {
       const { moduleId } = req.params;
 
-      if (!ObjectId.isValid(moduleId)) {
-        return res.status(400).json({ message: 'Invalid moduleId!' });
-      }
+      validateObjectId(moduleId, 'moduleId');
 
       const module = await Module.findById(moduleId).lean();
       if (!module) {
@@ -114,21 +110,13 @@ const moduleController = {
       const { moduleId } = req.params;
       const { title, keywords } = req.body;
 
-      if (!ObjectId.isValid(moduleId)) {
-        return res.status(400).json({ message: 'Invalid moduleId!' });
-      }
-
       if (!title || !keywords) {
         return res.status(400).json({ message: 'Please type content!' });
       }
 
-      if (typeof title !== 'string') {
-        return res.status(400).json({ message: 'Title must be string type!' });
-      }
-
-      if (!Array.isArray(keywords)) {
-        return res.status(400).json({ message: 'Keyword must be array type!' });
-      }
+      validateObjectId(moduleId, 'moduleId');
+      validateString(title, 'Title');
+      validateArray(keywords, 'Keywords');
 
       const module = await Module.findByIdAndUpdate(
         moduleId,
@@ -153,9 +141,7 @@ const moduleController = {
     try {
       const { moduleId } = req.params;
 
-      if (!ObjectId.isValid(moduleId)) {
-        return res.status(400).json({ message: 'Invalid moduleId!' });
-      }
+      validateObjectId(moduleId, 'moduleId');
 
       const module = await Module.findByIdAndDelete(moduleId);
       if (!module) {
