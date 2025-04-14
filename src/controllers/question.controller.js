@@ -15,7 +15,7 @@ const questionController = {
       const { keyword, title, correctAnswer, wrongAnswers } = req.body;
 
       // check exist module
-      const module = await Module.findById(moduleId);
+      const module = await Module.findById(moduleId).lean();
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
