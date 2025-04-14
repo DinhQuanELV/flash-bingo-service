@@ -15,13 +15,13 @@ const questionController = {
       const { keyword, title, correctAnswer, wrongAnswers } = req.body;
 
       // check exist module
-      const module = await Module.findById(moduleId);
+      const module = await Module.findById(moduleId).lean();
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
 
       // validate value
-      if (!keyword || !title || !correctAnswer || !wrongAnswers) {
+      if (!keyword || !title || !correctAnswer || wrongAnswers.length === 0) {
         return res.status(400).json({ message: 'Please type content!' });
       }
 
@@ -32,7 +32,7 @@ const questionController = {
       validateArray(wrongAnswers, 'wrongAnswers');
 
       // check exist question
-      const existsQuestion = await Question.findOne({ moduleId, title });
+      const existsQuestion = await Question.findOne({ moduleId, title }).lean();
       if (existsQuestion) {
         return res.status(409).json({ message: 'Question already exists!' });
       }
@@ -52,10 +52,7 @@ const questionController = {
       });
       await question.save();
 
-      return res.status(201).json({
-        message: 'Create question successfully!',
-        question,
-      });
+      return res.status(201).json(question);
     } catch (error) {
       next(error);
     }
@@ -68,7 +65,7 @@ const questionController = {
 
       validateObjectId(moduleId, 'moduleId');
 
-      const module = await Module.findById(moduleId);
+      const module = await Module.findById(moduleId).lean();
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
@@ -130,7 +127,7 @@ const questionController = {
           wrongAnswers,
         },
         { new: true },
-      );
+      ).lean();
       if (!question) {
         return res.status(404).json({ message: 'Question not found!' });
       }
@@ -148,7 +145,7 @@ const questionController = {
 
       validateObjectId(questionId, 'questionId');
 
-      const question = await Question.findByIdAndDelete(questionId);
+      const question = await Question.findByIdAndDelete(questionId).lean();
       if (!question) {
         return res.status(404).json({ message: 'Question not found!' });
       }
