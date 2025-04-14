@@ -14,18 +14,22 @@ const questionController = {
       const { moduleId } = req.params;
       const { keyword, title, correctAnswer, wrongAnswers } = req.body;
 
-      // validate value
-      validateObjectId(moduleId, 'moduleId');
-      validateString(keyword, 'keyword');
-      validateString(title, 'title');
-      validateString(correctAnswer, 'correctAnswer');
-      validateArray(wrongAnswers, 'wrongAnswers');
-
       // check exist module
       const module = await Module.findById(moduleId);
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
+
+      // validate value
+      if (!keyword || !title || !correctAnswer || !wrongAnswers) {
+        return res.status(400).json({ message: 'Please type content!' });
+      }
+
+      validateObjectId(moduleId, 'moduleId');
+      validateString(keyword, 'keyword');
+      validateString(title, 'title');
+      validateString(correctAnswer, 'correctAnswer');
+      validateArray(wrongAnswers, 'wrongAnswers');
 
       // check exist question
       const existsQuestion = await Question.findOne({ moduleId, title });
@@ -33,7 +37,12 @@ const questionController = {
         return res.status(409).json({ message: 'Question already exists!' });
       }
 
+      if (!module.keywords.includes(keyword)) {
+        return res.status(400).json({ message: 'Keyword is not exist!' });
+      }
+
       const question = new Question({
+        moduleId,
         keyword,
         title,
         correctAnswer,
