@@ -142,9 +142,18 @@ const questionController = {
   },
 
   // [DELETE] /question/delete/:questionId
-  delete: async () => {
+  delete: async (req, res, next) => {
     try {
-      //
+      const { questionId } = req.params;
+
+      validateObjectId(questionId, 'questionId');
+
+      const question = await Question.findByIdAndDelete(questionId);
+      if (!question) {
+        return res.status(404).json({ message: 'Question not found!' });
+      }
+
+      return res.status(200).json({ message: 'Delete question successfully!' });
     } catch (error) {
       next(error);
     }
