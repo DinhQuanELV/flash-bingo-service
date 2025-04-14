@@ -37,10 +37,12 @@ const questionController = {
         return res.status(409).json({ message: 'Question already exists!' });
       }
 
+      // check keyword is exits in module
       if (!module.keywords.includes(keyword)) {
         return res.status(400).json({ message: 'Keyword is not exist!' });
       }
 
+      // create new question
       const question = new Question({
         moduleId,
         keyword,
@@ -60,9 +62,26 @@ const questionController = {
   },
 
   // [GET] /question/show/all/:moduleId
-  showAll: async () => {
+  showAll: async (req, res, next) => {
     try {
-      //
+      const { moduleId } = req.params;
+
+      validateObjectId(moduleId, 'moduleId');
+
+      const module = await Module.findById(moduleId);
+      if (!module) {
+        return res.status(404).json({ message: 'Module not found!' });
+      }
+
+      const questions = await Question.find({ moduleId }).lean();
+      if (questions.length === 0) {
+        return res.status(200).json({
+          message: 'This module does not have any questions yet!',
+          questions: [],
+        });
+      }
+
+      return res.status(200).json(questions);
     } catch (error) {
       next(error);
     }
