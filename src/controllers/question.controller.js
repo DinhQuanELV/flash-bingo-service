@@ -88,9 +88,18 @@ const questionController = {
   },
 
   // [GET] /question/show/:questionId
-  show: async () => {
+  show: async (req, res, next) => {
     try {
-      //
+      const { questionId } = req.params;
+
+      validateObjectId(questionId, 'questionId');
+
+      const question = await Question.findById(questionId).lean();
+      if (!question) {
+        return res.status(404).json({ message: 'Question not found!' });
+      }
+
+      return res.status(200).json(question);
     } catch (error) {
       next(error);
     }
