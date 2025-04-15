@@ -8,10 +8,12 @@ const bingoSchema = new mongoose.Schema(
       ref: 'Module',
       required: true,
     },
-    title: {
-      type: String,
+    index: {
+      type: Number,
       required: true,
-      trim: true,
+      unique: true,
+      min: 1,
+      max: 30,
     },
     keywords: {
       type: [String],
@@ -23,4 +25,4 @@ const bingoSchema = new mongoose.Schema(
   },
 );
 
-module.exports = bingoSchema;
+module.exports = mongoose.model('Bingo', bingoSchema);
