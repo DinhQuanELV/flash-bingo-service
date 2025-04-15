@@ -1,9 +1,6 @@
 const Module = require('../models/Module');
-const {
-  validateString,
-  validateArray,
-  validateObjectId,
-} = require('../utils/validateType');
+const Question = require('../models/Question');
+const { validateString, validateArray, validateObjectId } = require('../utils/validateType');
 
 const moduleController = {
   // [POST] /module/create
@@ -118,11 +115,7 @@ const moduleController = {
       validateString(title, 'title');
       validateArray(keywords, 'keywords');
 
-      const module = await Module.findByIdAndUpdate(
-        moduleId,
-        { title, keywords },
-        { new: true },
-      ).lean();
+      const module = await Module.findByIdAndUpdate(moduleId, { title, keywords }, { new: true }).lean();
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
@@ -140,10 +133,13 @@ const moduleController = {
 
       validateObjectId(moduleId, 'moduleId');
 
-      const module = await Module.findByIdAndDelete(moduleId).lean();
+      const module = await Module.findById(moduleId).lean();
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
+
+      await Question.deleteMany({ moduleId }).lean();
+      await Module.findByIdAndDelete(moduleId).lean();
 
       return res.status(200).json({ message: 'Delete module successfully!' });
     } catch (error) {
