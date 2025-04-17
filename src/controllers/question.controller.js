@@ -1,10 +1,6 @@
 const Module = require('../models/Module');
 const Question = require('../models/Question');
-const {
-  validateString,
-  validateArray,
-  validateObjectId,
-} = require('../utils/validateType');
+const { validateString, validateArray, validateObjectId } = require('../utils/validateType');
 
 const questionController = {
   // [POST] /question/create/:moduleId
@@ -127,7 +123,7 @@ const questionController = {
           wrongAnswers,
         },
         { new: true },
-      ).lean();
+      );
       if (!question) {
         return res.status(404).json({ message: 'Question not found!' });
       }
@@ -145,7 +141,7 @@ const questionController = {
 
       validateObjectId(questionId, 'questionId');
 
-      const question = await Question.findByIdAndDelete(questionId).lean();
+      const question = await Question.findByIdAndDelete(questionId);
       if (!question) {
         return res.status(404).json({ message: 'Question not found!' });
       }
