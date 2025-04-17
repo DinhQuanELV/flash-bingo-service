@@ -39,11 +39,7 @@ const authController = {
       const user = await validateLogin(username, password);
       if (user) {
         // generate token
-        const accessToken = jwt.sign(
-          { id: user._id },
-          process.env.JWT_ACCESS_KEY,
-          { expiresIn: '30d' },
-        );
+        const accessToken = jwt.sign({ id: user._id }, process.env.JWT_ACCESS_KEY, { expiresIn: '30d' });
 
         // store token in cookies
         res.cookie('accessToken', accessToken, {
@@ -54,13 +50,6 @@ const authController = {
         });
 
         const { _id, password, ...others } = user._doc;
-        res.cookie('userId', _id, {
-          httpOnly: true,
-          secure: cookiesSecure,
-          sameSite: process.env.COOKIES_SAME_SITE,
-          maxAge: 30 * 24 * 60 * 60 * 1000, // 30d * 24h * 60m * 60s * 1000 (ms)
-        });
-
         return res.status(200).json({ ...others });
       }
     } catch (error) {
@@ -72,11 +61,6 @@ const authController = {
   logout: async (req, res, next) => {
     try {
       res.clearCookie('accessToken', {
-        httpOnly: true,
-        secure: cookiesSecure,
-        sameSite: process.env.COOKIES_SAME_SITE,
-      });
-      res.clearCookie('userId', {
         httpOnly: true,
         secure: cookiesSecure,
         sameSite: process.env.COOKIES_SAME_SITE,
