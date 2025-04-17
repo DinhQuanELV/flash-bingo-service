@@ -115,7 +115,7 @@ const moduleController = {
       validateString(title, 'title');
       validateArray(keywords, 'keywords');
 
-      const module = await Module.findByIdAndUpdate(moduleId, { title, keywords }, { new: true }).lean();
+      const module = await Module.findByIdAndUpdate(moduleId, { title, keywords }, { new: true });
       if (!module) {
         return res.status(404).json({ message: 'Module not found!' });
       }
@@ -138,8 +138,8 @@ const moduleController = {
         return res.status(404).json({ message: 'Module not found!' });
       }
 
-      await Question.deleteMany({ moduleId }).lean();
-      await Module.findByIdAndDelete(moduleId).lean();
+      await Question.deleteMany({ moduleId });
+      await Module.findByIdAndDelete(moduleId);
 
       return res.status(200).json({ message: 'Delete module successfully!' });
     } catch (error) {
