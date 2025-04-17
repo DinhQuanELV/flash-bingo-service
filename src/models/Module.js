@@ -7,6 +7,8 @@ const moduleSchema = new mongoose.Schema(
       unique: true,
       required: true,
       trim: true,
+      minLength: 1,
+      maxLength: 32,
     },
     keywords: {
       type: [String],
